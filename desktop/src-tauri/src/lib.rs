@@ -1,4 +1,4 @@
-// PrintVault desktop shell
+// Printery desktop shell
 // Copyright (C) 2026 magikh0e - GPL-3.0-or-later
 //
 // The whole app is one HTML file that also runs in a browser. Everything the
@@ -920,7 +920,7 @@ async fn check_for_update(app: tauri::AppHandle) {
     // worth recording: see pv_check_update for why silence is the problem.
     match run_update_check(&app).await {
         Ok(Some(_)) | Ok(None) => {}
-        Err(e) => eprintln!("[PrintVault] update check failed: {}", e),
+        Err(e) => eprintln!("[Printery] update check failed: {}", e),
     }
 }
 
@@ -955,7 +955,7 @@ async fn run_update_check(app: &tauri::AppHandle) -> Result<Option<String>, Stri
     let offered = update.version.clone();
 
     let msg = format!(
-        "PrintVault {} is available (you have {}). Install it and restart now?
+        "Printery {} is available (you have {}). Install it and restart now?
 
 Your library and index are untouched.",
         update.version, update.current_version
@@ -1044,7 +1044,7 @@ pub fn run() {
             );
 
             WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
-                .title(concat!("PrintVault ", env!("CARGO_PKG_VERSION")))
+                .title(concat!("Printery ", env!("CARGO_PKG_VERSION")))
                 .inner_size(1280.0, 860.0)
                 .min_inner_size(720.0, 520.0)
                 .initialization_script(init.as_str())
@@ -1056,5 +1056,5 @@ pub fn run() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("error while running the PrintVault desktop app");
+        .expect("error while running the Printery desktop app");
 }

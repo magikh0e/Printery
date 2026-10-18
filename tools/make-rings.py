@@ -205,7 +205,7 @@ def build(circumference, steps=320):
 
 def write_stl(path, tris):
     with open(path, 'wb') as f:
-        f.write(b'head sizing ring, printvault.magikh0e.pl/headfit.html'.ljust(80, b' '))
+        f.write(b'head sizing ring, printery.magikh0e.com/headfit.html'.ljust(80, b' '))
         f.write(struct.pack('<I', len(tris)))
         for a, b, c in tris:
             ux, uy, uz = (b[0]-a[0], b[1]-a[1], b[2]-a[2])

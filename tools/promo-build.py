@@ -57,7 +57,7 @@ SHELL = """<defs>
     <path d="M56 86V56h30"/><path d="M994 56h30v30"/><path d="M1024 1834v30h-30"/><path d="M86 1864H56v-30"/>
   </g>"""
 
-FOOT = """<text x="540" y="1836" font-size="27" fill="#67718a" text-anchor="middle" letter-spacing="1.6">printvault.magikh0e.pl  ·  FREE AND OPEN SOURCE  ·  NOTHING UPLOADED</text>"""
+FOOT = """<text x="540" y="1836" font-size="27" fill="#67718a" text-anchor="middle" letter-spacing="1.6">printery.magikh0e.com  ·  FREE AND OPEN SOURCE  ·  NOTHING UPLOADED</text>"""
 
 MARK = """<g transform="translate(%d,%d) scale(%s)">
     <path d="M16 2 3 9v14l13 7 13-7V9z" fill="none" stroke="#e9edf4" stroke-opacity=".38" stroke-width="1.6" stroke-linejoin="round"/>
@@ -67,7 +67,7 @@ MARK = """<g transform="translate(%d,%d) scale(%s)">
 
 CARDS = {
     "title": SHELL + MARK % (398, 560, "4.2") + """
-  <text x="540" y="820" font-size="78" font-weight="800" fill="#e9edf4" text-anchor="middle" letter-spacing="-2">Print<tspan fill="#ff7a2f">Vault</tspan></text>
+  <text x="540" y="820" font-size="78" font-weight="800" fill="#e9edf4" text-anchor="middle" letter-spacing="-2">Print<tspan fill="#ff7a2f">ery</tspan></text>
   <text x="540" y="952" font-size="54" font-weight="700" fill="#e9edf4" text-anchor="middle" letter-spacing="-1">A local-first manager</text>
   <text x="540" y="1024" font-size="54" font-weight="700" fill="url(#hot)" text-anchor="middle" letter-spacing="-1">for 3D print files.</text>
   <text x="540" y="1128" font-size="32" fill="#8f9aac" text-anchor="middle">Free, open source, nothing uploaded</text>""",
@@ -79,9 +79,9 @@ CARDS = {
   <text x="540" y="1164" font-size="46" font-weight="700" fill="#e9edf4" text-anchor="middle" letter-spacing="-1">Head<tspan fill="#ff7a2f">fit</tspan></text>""",
 
     "end": SHELL + MARK % (430, 520, "3.4") + """
-  <text x="540" y="790" font-size="52" font-weight="800" fill="#e9edf4" text-anchor="middle" letter-spacing="-1">Print<tspan fill="#ff7a2f">Vault</tspan>  ·  Head<tspan fill="#ff7a2f">fit</tspan></text>
-  <text x="540" y="900" font-size="34" fill="#8f9aac" text-anchor="middle">printvault.magikh0e.pl</text>
-  <text x="540" y="958" font-size="34" fill="#8f9aac" text-anchor="middle">printvault.magikh0e.pl/headfit.html</text>
+  <text x="540" y="790" font-size="52" font-weight="800" fill="#e9edf4" text-anchor="middle" letter-spacing="-1">Print<tspan fill="#ff7a2f">ery</tspan>  ·  Head<tspan fill="#ff7a2f">fit</tspan></text>
+  <text x="540" y="900" font-size="34" fill="#8f9aac" text-anchor="middle">printery.magikh0e.com</text>
+  <text x="540" y="958" font-size="34" fill="#8f9aac" text-anchor="middle">printery.magikh0e.com/headfit.html</text>
   <g font-size="26" font-weight="600" letter-spacing="2">
     <rect x="258" y="1066" width="258" height="64" rx="4" fill="none" stroke="#313d4e"/>
     <text x="387" y="1107" fill="#e9edf4" text-anchor="middle">BROWSER</text>

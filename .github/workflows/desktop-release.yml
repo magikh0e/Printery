@@ -1,4 +1,4 @@
-# Builds the PrintVault desktop app (Tauri) for macOS, Linux and Windows.
+# Builds the Printery desktop app (Tauri) for macOS, Linux and Windows.
 #
 # Tauri can't cross-compile, so each installer is produced on its own OS runner.
 # There is no frontend build step: desktop/build.mjs copies the single-file app
@@ -8,7 +8,7 @@
 #   - push a tag matching desktop-v*   (e.g. desktop-v0.2.0)  -> release build
 #   - or run manually from the Actions tab (workflow_dispatch)
 #
-# Output: one DRAFT GitHub Release named "PrintVault Desktop v<version>" with
+# Output: one DRAFT GitHub Release named "Printery Desktop v<version>" with
 # the .dmg (macOS, universal), .AppImage/.deb/.rpm (Linux) and .msi/.exe
 # (Windows). Review the draft and hit Publish when you're happy with it.
 
@@ -47,7 +47,7 @@ jobs:
                 --jq ".[] | select(.tag_name==\"$TAG\") | .id" | head -1)
           if [ -z "$id" ]; then
             id=$(gh api --method POST repos/${{ github.repository }}/releases \
-                  -f tag_name="$TAG" -f name="PrintVault Desktop v${{ steps.v.outputs.v }}" \
+                  -f tag_name="$TAG" -f name="Printery Desktop v${{ steps.v.outputs.v }}" \
                   -F draft=true -F prerelease=false --jq '.id')
           fi
           echo "id=$id" >> "$GITHUB_OUTPUT"

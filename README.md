@@ -11,16 +11,16 @@ me.
 This is what I built to dig myself out. It's free, GPL-3.0, and runs either in
 your browser or as a desktop app.
 
-Live at https://printvault.magikh0e.pl/
+Live at https://printery.magikh0e.com/
 
 ## Get it
 
 Nothing to install if you just want to try it: open
-[printvault.magikh0e.pl](https://printvault.magikh0e.pl/) in Chrome, Edge,
+[printery.magikh0e.com](https://printery.magikh0e.com/) in Chrome, Edge,
 Brave or Opera and point it at a folder.
 
 If you would rather look before handing over a folder, there is a demo at
-[/app/?demo](https://printvault.magikh0e.pl/app/?demo). It fills the app with
+[/app/?demo](https://printery.magikh0e.com/app/?demo). It fills the app with
 an invented library so you can click around. It runs entirely in memory, so it
 cannot see or change a real library in the same browser, and it disappears when
 you close the tab.
@@ -34,13 +34,13 @@ The library, a model with its files and settings, the duplicates, the print log,
 then Headfit checking a helmet against a head built from tape measurements.
 Filmed against the demo library, so every model in it is invented.
 
-It plays on [YouTube](https://youtu.be/B8cpOXRhWRE) or on [the site](https://printvault.magikh0e.pl/#reel),
+It plays on [YouTube](https://youtu.be/B8cpOXRhWRE) or on [the site](https://printery.magikh0e.com/#reel),
 and the file itself is attached to
 [the latest release](https://github.com/magikh0e/Printery/releases/latest).
 GitHub will not play a video that lives in a repo, which is why this is a poster
 and not a player.
 
-There's a guide to [organising a folder full of 3D print files](https://printvault.magikh0e.pl/guide.html)
+There's a guide to [organising a folder full of 3D print files](https://printery.magikh0e.com/guide.html)
 if you want the approach before the tool: what to index, how to tag it so the
 tags still work at four hundred models, and what to do about the duplicates.
 
@@ -207,7 +207,7 @@ There's a second tool that came out of this one:
 Build a head from three tape measurements, load the STL you were about to
 print, and see where the two collide before you spend eight hours, or three
 days, of filament finding out. It's one HTML file like this one, it runs at
-[printvault.magikh0e.pl/headfit.html](https://printvault.magikh0e.pl/headfit.html),
+[printery.magikh0e.com/headfit.html](https://printery.magikh0e.com/headfit.html),
 and Settings in here has a button that opens it.
 
 It lives in its own repo. It's a separate tool on its own version number and
