@@ -32,7 +32,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
 SITEMAP = SITE / "sitemap.xml"
 CACHE = SITE / ".sitemap-hashes"
-HOST = "https://printvault.magikh0e.pl/"
+HOST = "https://printery.magikh0e.com/"
 
 CHECK = "--check" in sys.argv[1:]
 for a in sys.argv[1:]:
@@ -124,6 +124,15 @@ for b in blocks:
 
 out.append(xml[last:])
 new_xml = "".join(out)
+
+# Every <loc> was skipped, which means none of them start with HOST. That is
+# not "nothing changed", it is this script having nothing to do with the
+# sitemap it was pointed at, and it is what happened when the site moved to
+# printery.magikh0e.com while HOST still said printvault.magikh0e.pl: three
+# runs reported no change and the dates stopped moving. Say so instead.
+if not new_cache and not seeded:
+    sys.exit("none of the %d urls in %s start with %s, so nothing was checked"
+             % (len(blocks), SITEMAP.name, HOST))
 
 for name, before, after in moved:
     print("   %s changed, lastmod %s -> %s" % (name, before, after))
