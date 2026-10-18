@@ -39,7 +39,7 @@
     <path d="M3 9l13 6.6L29 9M16 15.6V30" fill="none" stroke="#e9edf4" stroke-opacity=".38" stroke-width="1.6" stroke-linejoin="round"/>
     <path d="M16 2 3 9l13 6.6L29 9z" fill="#ff7a2f"/>
   </g>
-  <text x="140" y="126" font-size="34" font-weight="700" fill="#e9edf4" letter-spacing="-1">Print<tspan fill="#ff7a2f">Vault</tspan></text>
+  <text x="140" y="126" font-size="34" font-weight="700" fill="#e9edf4" letter-spacing="-1">Print<tspan fill="#ff7a2f">ery</tspan></text>
 
   <!-- headline -->
   <text x="72" y="268" font-size="72" font-weight="800" fill="#e9edf4" letter-spacing="-3">A local-first manager</text>
@@ -89,5 +89,5 @@
   <!-- footer bar -->
   <rect x="0" y="600" width="1280" height="1" fill="#222a37"/>
   <text x="72" y="578" font-size="19" fill="#67718a" letter-spacing="2.2">BROWSER  ·  WINDOWS  ·  MACOS  ·  LINUX</text>
-  <text x="1208" y="578" font-size="19" fill="#67718a" text-anchor="end" letter-spacing="1.4">github.com/magikh0e/PrintVault</text>
+  <text x="1208" y="578" font-size="19" fill="#67718a" text-anchor="end" letter-spacing="1.4">github.com/magikh0e/Printery</text>
 </svg>
