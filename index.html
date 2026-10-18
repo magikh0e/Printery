@@ -464,7 +464,7 @@ table.t .num{font-family:var(--mono);text-align:right;font-size:12px}
  * Copyright (C) 2026 magikh0e
  * License: GPL-3.0-or-later (https://www.gnu.org/licenses/gpl-3.0.html)
  */
-const APP_VERSION = '0.2.33';
+const APP_VERSION = '0.2.34';
 
 /* ============================================================
    U — utilities
@@ -7520,6 +7520,9 @@ const Keys = {
 
 const WhatsNew = {
   notes: [
+    ['0.2.34', [
+      'Groundwork only. Windows now records a fixed upgrade identity, so a future installer always replaces the one you have rather than installing beside it. Nothing you can see changed.'
+    ]],
     ['0.2.33', [
       'A security fix in the TLS library the desktop app uses to check for and download updates. Nothing you can see changed; it is worth updating for anyway.'
     ]],
