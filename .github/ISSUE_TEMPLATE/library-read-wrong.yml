@@ -48,7 +48,7 @@ body:
   - type: textarea
     id: outcome
     attributes:
-      label: What PrintVault did, and what it should have done
+      label: What Printery did, and what it should have done
       description: What it showed you, and what the right answer would have been.
     validations:
       required: true

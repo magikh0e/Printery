@@ -1,4 +1,4 @@
-// Generates the PrintVault app icon as a real PNG, no image libraries needed.
+// Generates the Printery app icon as a real PNG, no image libraries needed.
 // Draws the isometric cube from the favicon: dark rounded square, bright orange
 // top face, two darker side faces. Node's zlib does the PNG compression.
 import { deflateSync } from 'node:zlib';

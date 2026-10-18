@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in PrintVault does not work
+description: Something in Printery does not work
 labels: ["bug"]
 body:
   - type: markdown
@@ -54,8 +54,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: PrintVault version
-      description: Shown next to the logo, top left. For example 0.2.23.
+      label: Printery version
+      description: Shown next to the logo, top left. For example 0.3.0.
     validations:
       required: true
 

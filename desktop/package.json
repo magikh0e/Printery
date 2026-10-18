@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.3.0",
   "type": "module",
-  "description": "PrintVault desktop client (Tauri shell around the single-file app)",
+  "description": "Printery desktop client (Tauri shell around the single-file app)",
   "scripts": {
     "prepare-dist": "node build.mjs",
     "tauri": "tauri",
