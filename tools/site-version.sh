@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Move the marketing site onto a new release.
 #
+# The app is called Printery everywhere a person reads it, but the installers
+# are still named PrintVault_*, because productName drives both the filenames
+# and the Windows install identity and moving it strands anyone who installed
+# from the .exe. So the anchors below track the asset names, not the brand.
+#
 # The version sits in fourteen places in site/index.html: the JSON-LD
 # softwareVersion, the FAQ answer twice, body copy, the footer, six download
 # filenames and the two source archive URLs. Six of those are links that carry
@@ -66,7 +71,7 @@ fi
 # first match got Headfit's, and the replace that followed wrote Printery's
 # version straight over it. A download filename is unambiguous, and it is also
 # the exact thing that breaks when this is not run.
-OLD=$(grep -oE 'Printery_[0-9.]+_x64_en-US\.msi' "$PAGE" | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+OLD=$(grep -oE 'PrintVault_[0-9.]+_x64_en-US\.msi' "$PAGE" | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
 [ -n "${OLD:-}" ] || die "could not find a versioned download filename in $PAGE"
 
 # Headfit ships on its own schedule and has its own entry in the same JSON-LD.
@@ -158,7 +163,7 @@ if [ "$DEPLOY" = 1 ]; then
     scp -i "$KEY" -P "$PORT" site/sitemap.xml "$HOST:$ROOT/sitemap.xml" || die "sitemap upload failed"
     echo "   sitemap.xml uploaded"
   fi
-  live=$(curl -s "$SITE/?cb=$$" | grep -c "Printery_${VER}_" || true)
+  live=$(curl -s "$SITE/?cb=$$" | grep -c "PrintVault_${VER}_" || true)
   [ "${live:-0}" -gt 0 ] || die "the live page is not serving $VER links yet"
   echo "   Live page carries $live filenames for $VER"
   tools/indexnow.sh / || true
