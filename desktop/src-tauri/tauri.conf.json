@@ -29,7 +29,12 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "createUpdaterArtifacts": true
+    "createUpdaterArtifacts": true,
+    "windows": {
+      "wix": {
+        "upgradeCode": "c70f168c-c834-5496-9dbd-3a58ce97cd70"
+      }
+    }
   },
   "plugins": {
     "updater": {
