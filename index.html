@@ -1,5 +1,5 @@
 <!--
-  PrintVault - 3D Print Library Manager
+  Printery - 3D Print Library Manager
   Copyright (C) 2026 magikh0e
 
   This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PrintVault — 3D Print Library Manager</title>
+<title>Printery — 3D Print Library Manager</title>
 <meta name="description" content="Local-first 3D print file manager. Index your STL/3MF/gcode folders, tag and search models, track print history, find duplicates, and manage filament. No accounts, no uploads, no tracking.">
 <meta name="author" content="magikh0e">
 <meta name="color-scheme" content="dark light">
@@ -460,7 +460,7 @@ table.t .num{font-family:var(--mono);text-align:right;font-size:12px}
 (function(){
 'use strict';
 /*
- * PrintVault - 3D Print Library Manager
+ * Printery - 3D Print Library Manager
  * Copyright (C) 2026 magikh0e
  * License: GPL-3.0-or-later (https://www.gnu.org/licenses/gpl-3.0.html)
  */
@@ -604,7 +604,7 @@ const DB = {
         });
       };
       // another window mid-upgrade: say so rather than sit on a blank page
-      req.onblocked = ()=>rej(new Error('another PrintVault window has the database open, close it and reload'));
+      req.onblocked = ()=>rej(new Error('another Printery window has the database open, close it and reload'));
       req.onsuccess = ()=>{
         DB._db = req.result;
         // let a future upgrade in a newer tab proceed instead of blocking it
@@ -766,7 +766,7 @@ const Toast = {
       setTimeout(()=>el.remove(),260); }, ms||2800);
   },
   ok(m){ Toast.show(m,'ok'); },
-  err(m, ms){ Toast.show(m,'bad',ms||5000); console.warn('[PrintVault]', m); }
+  err(m, ms){ Toast.show(m,'bad',ms||5000); console.warn('[Printery]', m); }
 };
 
 const Prog = {
@@ -2225,13 +2225,13 @@ const Scan = {
 
   unsupported(){
     Modal.open('Folder access not available',
-      '<div class="note bad"><b>This browser cannot index folders.</b><br>PrintVault uses the File System Access API, which needs:</div>'+
+      '<div class="note bad"><b>This browser cannot index folders.</b><br>Printery uses the File System Access API, which needs:</div>'+
       '<ul style="line-height:1.9;color:var(--dim);padding-left:20px;margin:0 0 12px">'+
       '<li>Chrome, Edge, Opera, or Brave on desktop (not Firefox or Safari)</li>'+
       '<li>A <b>secure context</b>: served over <code>https://</code> or <code>http://localhost</code></li>'+
       '</ul>'+
       (!FS.secure ? '<div class="note bad">You are on <code>'+U.esc(location.protocol)+'</code>, which is not a secure context. Serve this file from a local web server, for example:<br><br><code style="display:block;background:var(--bg);padding:8px 10px;border-radius:6px;margin-top:6px">py -m http.server 8080</code><br>then open <code>http://localhost:8080/printvault/</code></div>' : '')+
-      '<p style="color:var(--dim);font-size:12.5px;line-height:1.6;margin:0">Everything else in PrintVault still works. You can add models, prints, filament, and queue entries by hand.</p>',
+      '<p style="color:var(--dim);font-size:12.5px;line-height:1.6;margin:0">Everything else in Printery still works. You can add models, prints, filament, and queue entries by hand.</p>',
       '<button class="b p" onclick="PV.Modal.close()">Got it</button>');
   },
 
@@ -2363,7 +2363,7 @@ const Scan = {
     }
     if(Prog.cancelled) return;
 
-    if(skippedByExclude) console.info('[PrintVault] '+skippedByExclude+' files skipped by exclusions in "'+root.name+'"');
+    if(skippedByExclude) console.info('[Printery] '+skippedByExclude+' files skipped by exclusions in "'+root.name+'"');
 
     /* A failure to list the top level is not "some folders were skipped", it
        means the handle the browser gave us no longer resolves to anything.
@@ -2373,7 +2373,7 @@ const Scan = {
        without a click, so say that rather than implying the files are gone. */
     const rootDead = stats.badDirs.some(d=>d.path === '(top level)');
     if(rootDead){
-      console.warn('[PrintVault] root handle no longer resolves for "'+root.name+'":', stats.badDirs[0]);
+      console.warn('[Printery] root handle no longer resolves for "'+root.name+'":', stats.badDirs[0]);
       Toast.err('Lost the connection to "'+root.name+'". The folder is almost certainly still there, but '+
         'the browser\'s handle to it stopped working, which cloud sync folders like OneDrive and iCloud '+
         'cause when they replace a directory. Add the folder again to reconnect. Your tags, notes and '+
@@ -2385,7 +2385,7 @@ const Scan = {
          files on disk are fine, and the index has to survive with them. */
       return;
     } else if(stats.badDirs.length){
-      console.warn('[PrintVault] unreadable folders in "'+root.name+'":', stats.badDirs);
+      console.warn('[Printery] unreadable folders in "'+root.name+'":', stats.badDirs);
       Toast.err(stats.badDirs.length+' folder'+(stats.badDirs.length===1?'':'s')+' in "'+root.name+
         '" could not be listed and were skipped, starting with "'+stats.badDirs[0].path+'" ('+
         stats.badDirs[0].error+'). Network drives can drop out mid-scan. See the console for the full list.');
@@ -2485,7 +2485,7 @@ const Scan = {
         const target = byName || (only && only.size === 1 ? Array.from(only)[0] : null);
         if(target && target !== r.modelId){ r.modelId = target; rehomed++; }
       }
-      if(rehomed) console.info('[PrintVault] attached '+rehomed+' loose images/docs to a neighbouring model');
+      if(rehomed) console.info('[Printery] attached '+rehomed+' loose images/docs to a neighbouring model');
     }
 
     const removedIds = Array.from(oldFiles.values()).map(f=>f.id);
@@ -2728,7 +2728,7 @@ const Scan = {
       const have = new Set(await DB.keys('thumbs'));
       const dangling = models.filter(m=>m.thumbId && !have.has(m.thumbId));
       for(const m of dangling) m.thumbId = null;
-      if(dangling.length) console.info('[PrintVault] '+dangling.length+' previews had lost their image, rebuilding');
+      if(dangling.length) console.info('[Printery] '+dangling.length+' previews had lost their image, rebuilding');
     }catch(e){}
     if(Store.settings.thumbOnScan) await Scan.thumbnails(models);
 
@@ -3145,7 +3145,7 @@ const Library = {
 
   welcome(){
     return '<div class="pv-empty" style="padding-top:36px">'+I.folder+
-      '<h3>Point PrintVault at your 3D print folders</h3>'+
+      '<h3>Point Printery at your 3D print folders</h3>'+
       '<p>It walks the folders in place and builds an index: models, files, slicer settings from gcode, and preview images. '+
       'Nothing is uploaded and nothing is moved. Everything stays on this machine.</p>'+
       '<button class="b p" onclick="PV.Scan.addRoot()">'+I.folder+' Choose a folder</button>'+
@@ -3254,7 +3254,7 @@ const Library = {
     Modal.open('Rename folder',
       '<div class="f"><label>Display name</label><input id="rnName" value="'+U.attr(r.name)+'"></div>'+
       '<div style="color:var(--dim2);font-size:12px;line-height:1.6">Changes only the label shown in '+
-      'PrintVault. Nothing on disk is renamed. Useful when a drive or network share reports its name as '+
+      'Printery. Nothing on disk is renamed. Useful when a drive or network share reports its name as '+
       '<code>\\</code> or not at all.</div>',
       '<button class="b" onclick="PV.Modal.back()">Cancel</button>'+
       '<button class="b p" onclick="PV.Library.saveRootName(\''+id+'\')">Save</button>');
@@ -3270,7 +3270,7 @@ const Library = {
   removeRoot(id){
     const r = Store.root(id); if(!r) return;
     Modal.confirm('Remove folder?',
-      'This removes <b>'+U.esc(r.name)+'</b> and its '+(r.models||0)+' models from the PrintVault index, including any tags and notes you added to them. '+
+      'This removes <b>'+U.esc(r.name)+'</b> and its '+(r.models||0)+' models from the Printery index, including any tags and notes you added to them. '+
       '<b>No files on disk are touched.</b> Print history entries stay but will point at missing models.',
       ()=>Scan.removeRoot(id), 'Remove from index', true);
   },
@@ -3554,7 +3554,7 @@ const Detail = {
     Detail._renameFromCard = !!fromCard;
     Modal.open('Rename',
       '<div class="f"><label>Display name</label><input id="rnName2" value="'+U.attr(m.name)+'"></div>'+
-      '<div style="color:var(--dim2);font-size:12px;line-height:1.6">Changes only the name PrintVault shows. '+
+      '<div style="color:var(--dim2);font-size:12px;line-height:1.6">Changes only the name Printery shows. '+
       'Nothing on disk is renamed.</div>',
       '<button class="b" onclick="PV.Modal.back()">Cancel</button>'+
       '<button class="b p" onclick="PV.Detail.saveName()">Save</button>');
@@ -3586,7 +3586,7 @@ const Detail = {
     const path = isDir ? m.path : U.dir(m.path);
     if(!path) return Toast.err('That is the folder itself, exclude something inside it instead');
     Modal.confirm('Stop indexing this folder?',
-      'PrintVault will ignore <b>'+U.esc(U.base(path))+'</b> and everything under it on the next scan, '+
+      'Printery will ignore <b>'+U.esc(U.base(path))+'</b> and everything under it on the next scan, '+
       'and drop the '+(isDir?'card':'cards')+' it produced.'+
       '<div class="mono" style="margin-top:8px;font-size:11.5px;color:var(--dim2);word-break:break-all">'+
       U.esc(r.name||'')+'/'+U.esc(path)+'</div>'+
@@ -3718,7 +3718,7 @@ const Detail = {
     if(!quarantine && files.length >= 3){
       return Modal.confirmTyped('Delete "'+U.esc(m.name)+'"?',
         'This permanently removes <b>'+files.length+' files</b>, '+U.bytes(bytes)+
-        ', from disk. There is no Recycle Bin and PrintVault cannot bring them back.'+
+        ', from disk. There is no Recycle Bin and Printery cannot bring them back.'+
         '<div class="mono" style="margin-top:8px;font-size:11.5px;color:var(--dim2);word-break:break-all">'+
           U.esc((r&&r.name)||'') + '/' + U.esc(m.path) + '</div>',
         'DELETE', run, I.trash+' Delete permanently');
@@ -3836,12 +3836,12 @@ const Archive = {
     h += '</div>';
 
     if(f.ext !== 'zip')
-      return h + '<div class="note bad">This is a <b>.'+U.esc(f.ext)+'</b> archive. PrintVault can only read '+
+      return h + '<div class="note bad">This is a <b>.'+U.esc(f.ext)+'</b> archive. Printery can only read '+
         'inside <b>.zip</b> files, so the contents cannot be listed. Extract it next to the archive and rescan '+
         'to index what is inside.</div>';
 
     if(!listed)
-      return h + '<div class="note">This archive was never extracted, so PrintVault indexed it as a single '+
+      return h + '<div class="note">This archive was never extracted, so Printery indexed it as a single '+
         'file. Read the listing to see what is inside without unpacking it, or extract it to make the models '+
         'usable in your slicer ('+U.bytes(f.size)+' compressed).</div>';
 
@@ -3988,7 +3988,7 @@ const Archive = {
       '<div class="note" style="margin-top:12px">The archive itself is left alone. Once extracted it shows up under '+
         '<b>Duplicates &rarr; Extracted archives</b>, where you can review and delete the originals in bulk.</div>'+
       '<div class="note bad">Your browser will ask for permission to write to this folder. '+
-        'PrintVault only writes inside the destination above.</div>',
+        'Printery only writes inside the destination above.</div>',
       '<button class="b" onclick="PV.Modal.back()">Cancel</button>'+
       '<button class="b p" onclick="PV.Archive.extract(\''+modelId+'\')">Extract</button>');
   },
@@ -4367,7 +4367,7 @@ const Prints = {
         '<button class="b p" onclick="PV.Prints.clearFilters()">Clear filters</button></div>';
     } else if(!all.length){
       h += '<div class="pv-empty">'+I.print+'<h3>No prints logged yet</h3>'+
-        '<p>Log a print when it finishes and PrintVault remembers the printer, filament, layer height, and how it turned out. '+
+        '<p>Log a print when it finishes and Printery remembers the printer, filament, layer height, and how it turned out. '+
         'Next time you open that model the settings are right there.</p>'+
         '<button class="b p" onclick="PV.Prints.log()">'+I.plus+' Log your first print</button></div>';
       v.innerHTML = h; return;
@@ -4541,7 +4541,7 @@ const Filament = {
     const list = Store.filaments.filter(f=>Filament._arch || !f.archived);
     if(!list.length){
       h += '<div class="pv-empty">'+I.spool+'<h3>No filament tracked</h3>'+
-        '<p>Add your spools and PrintVault subtracts grams as you log prints, so you know what is actually left before you start a 14 hour job.</p>'+
+        '<p>Add your spools and Printery subtracts grams as you log prints, so you know what is actually left before you start a 14 hour job.</p>'+
         '<button class="b p" onclick="PV.Filament.edit()">'+I.plus+' Add a spool</button></div>';
       v.innerHTML = h; return;
     }
@@ -4705,11 +4705,11 @@ const AutoBackup = {
       Store.settings.autoBackupAt = Date.now();
       Store.settings.autoBackupSig = AutoBackup.signature();
       await Store.saveSettings();
-      console.info('[PrintVault] backup written to ' + root.name + '/' + path);
+      console.info('[Printery] backup written to ' + root.name + '/' + path);
       return path;
     }catch(e){
       // a read-only or disconnected folder is not worth interrupting anyone over
-      console.warn('[PrintVault] automatic backup failed:', e && e.message || e);
+      console.warn('[Printery] automatic backup failed:', e && e.message || e);
       return null;
     }
   }
@@ -4933,7 +4933,7 @@ const Cost = {
 
    This does the useful half instead. When you send a model to a slicer, the
    folder it lives in is noted along with the gcode already in it. Come back to
-   the window later and PrintVault looks once more: if gcode has appeared, it
+   the window later and Printery looks once more: if gcode has appeared, it
    scans and tells you. No process spawning, no profiles, and it works with
    every slicer rather than one. */
 const SliceWatch = {
@@ -5312,7 +5312,7 @@ const Send = {
       if(Send._ctx && Send._ctx.queueId) await Queue.sent(Send._ctx.queueId, f, p.name);
     }catch(e){
       Prog.stop();
-      console.error('[PrintVault] send failed', e);
+      console.error('[Printery] send failed', e);
       Toast.err('Send failed: '+(e && e.message || e || 'no reason given'));
     }
   }
@@ -6162,7 +6162,7 @@ const Dupes = {
     if(Dupes.mode === 'exact'){
       if(hashed === 0){
         h += '<div class="pv-empty">'+I.copy+'<h3>Nothing hashed yet</h3>'+
-          '<p>To find byte-identical files, PrintVault reads and hashes them. It only hashes files that share an exact size with another file, so it skips almost everything.</p>'+
+          '<p>To find byte-identical files, Printery reads and hashes them. It only hashes files that share an exact size with another file, so it skips almost everything.</p>'+
           '<button class="b p" onclick="PV.Dupes.hash()">'+I.refresh+' Hash candidate files</button></div>';
       } else if(!exact.length){
         h += '<div class="pv-empty">'+I.check+'<h3>No exact duplicates</h3><p>'+hashed.toLocaleString()+' files hashed, all unique.</p></div>';
@@ -6207,7 +6207,7 @@ const Dupes = {
     } else {
       if(!arch.length) h += '<div class="pv-empty">'+I.check+'<h3>No leftover archives</h3><p>No zip, 7z or rar files sitting next to a folder of the same name.</p></div>';
       else {
-        h += '<div class="note">Each archive below has a sibling folder with the same name, so it was probably already extracted. Deleting the archive is usually safe, but PrintVault cannot look inside rar or 7z files to verify.</div>';
+        h += '<div class="note">Each archive below has a sibling folder with the same name, so it was probably already extracted. Deleting the archive is usually safe, but Printery cannot look inside rar or 7z files to verify.</div>';
         h += '<div class="dupe"><div class="dupe-h"><b>'+arch.length+' archives</b><span class="hash">'+U.bytes(archWaste)+' total</span><div class="sp"></div>'+
           '<button class="b sm d" onclick="PV.Dupes.delMany('+JSON.stringify(arch.map(f=>f.id)).replace(/"/g,'&quot;')+')">'+I.trash+' Delete all</button></div>'+
           arch.slice(0,300).map(f=>
@@ -6311,7 +6311,7 @@ const Dupes = {
       if(files.length < Dupes.TYPED_AT) return Dupes._run(files);
       Modal.confirmTyped('Delete '+files.length+' files?',
         'This removes <b>'+files.length+' files</b> and about <b>'+U.bytes(total)+'</b> from disk. '+
-        'They do not go to the Recycle Bin and PrintVault cannot bring them back.',
+        'They do not go to the Recycle Bin and Printery cannot bring them back.',
         'DELETE', ()=>Dupes._run(files), I.trash+' Delete permanently');
     };
   },
@@ -6691,7 +6691,7 @@ const Settings = {
       '</div>';
 
     h += '<div class="panel" style="border-color:rgba(255,96,96,.35)"><h3 style="color:var(--bad)">'+I.warn+' Danger zone</h3>'+
-      '<p style="color:var(--dim);font-size:12.5px;line-height:1.65;margin:0 0 12px">These only affect the PrintVault '+
+      '<p style="color:var(--dim);font-size:12.5px;line-height:1.65;margin:0 0 12px">These only affect the Printery '+
       (FS.kind === 'desktop' ? 'database on this machine' : 'database in this browser')+'. '+
       '<b>No files on disk are ever touched here.</b></p>'+
       '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
@@ -6703,7 +6703,7 @@ const Settings = {
        data. Both links open outside: no payment anything is in this build. */
     h += '<div class="panel"><h3>'+I.heart+' Support</h3>'+
       '<p style="color:var(--dim);font-size:12.5px;line-height:1.65;margin:0 0 12px">'+
-      'PrintVault is free and open source, built and kept going in my own time, with no '+
+      'Printery is free and open source, built and kept going in my own time, with no '+
       'accounts, no tracking, no ads and nothing uploaded. If it has saved you a failed '+
       'print or a few gigabytes, there are two ways to chip in: a one off, or something '+
       'monthly. Neither unlocks anything, because there is nothing locked.</p>'+
@@ -6715,7 +6715,7 @@ const Settings = {
       'the scanner is worth just as much.</div></div>';
 
     h += '<div style="text-align:center;color:var(--dim2);font-size:12px;padding:20px 0 8px;line-height:1.7">'+
-      '<b style="color:var(--dim)">PrintVault</b> v'+APP_VERSION+' &copy; 2026 '+
+      '<b style="color:var(--dim)">Printery</b> v'+APP_VERSION+' &copy; 2026 '+
       '<a href="https://magikh0e.pl" target="_blank" rel="noopener noreferrer me">magikh0e</a><br>'+
       'Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GPL-3.0-or-later</a> · '+
       (FS.kind === 'desktop'
@@ -6880,7 +6880,7 @@ const Settings = {
 
   backupData(){
     return {
-      app:'PrintVault', version:APP_VERSION, exportedAt:new Date().toISOString(),
+      app:'Printery', version:APP_VERSION, exportedAt:new Date().toISOString(),
       settings: Store.settings,
       roots: Store.roots.map(r=>({id:r.id, name:r.name, addedAt:r.addedAt, lastScan:r.lastScan})),
       // rootName travels with each model: root ids are local to one install,
@@ -6924,7 +6924,11 @@ const Settings = {
       const file = inp.files[0]; if(!file) return;
       let data;
       try{ data = JSON.parse(await file.text()); }catch(e){ return Toast.err('That is not valid JSON'); }
-      if(!data || data.app !== 'PrintVault') return Toast.err('Not a PrintVault backup');
+      // Accepts 'PrintVault' as well, because every backup written before the
+      // rename says that, and refusing them would mean the rename quietly ate
+      // people's tags, notes and print history the first time they restored.
+      if(!data || (data.app !== 'Printery' && data.app !== 'PrintVault'))
+        return Toast.err('Not a Printery backup');
       Modal.confirm('Import backup?',
         'Adds <b>'+(data.prints||[]).length+'</b> prints, <b>'+(data.filaments||[]).length+'</b> spools, and metadata for <b>'+
         (data.models||[]).length+'</b> models. Existing entries with the same id are overwritten; nothing is deleted.',
@@ -6987,7 +6991,7 @@ const Settings = {
   },
   clearAll(){
     Modal.confirm('Erase everything?',
-      'Deletes the entire PrintVault database in this browser: index, print history, filament, printers, and queue. '+
+      'Deletes the entire Printery database in this browser: index, print history, filament, printers, and queue. '+
       'This cannot be undone. <b>No files on disk are touched.</b> Export a backup first if you want one.',
       async ()=>{
         await Promise.all(STORES.map(s=>DB.clear(s)));
@@ -7156,7 +7160,7 @@ const Demo = {
   /* Nothing here has a file behind it, so anything reaching for one should
      say why rather than surface a DOMException from three layers down. */
   guard(){
-    const nope = ()=>Promise.reject(new Error('The demo has no files on disk. Download PrintVault to use your own library.'));
+    const nope = ()=>Promise.reject(new Error('The demo has no files on disk. Download Printery to use your own library.'));
     ['read','readTail','readRange','headTail','writeFile','deleteFile','renameFile',
      'moveToQuarantine','mkdirp','pick'].forEach(k=>{ if(typeof FS[k]==='function') FS[k] = nope; });
     ['btnAddRoot','btnScan'].forEach(id=>{ const el = document.getElementById(id); if(el) el.classList.add('hidden'); });
@@ -7169,7 +7173,7 @@ const Demo = {
       '<b>Demo library.</b>' +
       '<span>Every model, print and spool below is invented, and nothing is saved. ' +
       'The real thing reads a folder you already have.</span>' +
-      '<a href="/">Get PrintVault</a>' +
+      '<a href="/">Get Printery</a>' +
       '<a class="q" href="./">Exit demo</a>';
     const app = document.querySelector('.pv-app');
     if(app) app.insertBefore(bar, app.firstChild);
@@ -7593,7 +7597,7 @@ const WhatsNew = {
     Modal.open('What changed',
       h + '<p style="color:var(--dim2);font-size:12px;margin:16px 0 0">'+
         'Older releases, and the longer version of all of this, are on '+
-        '<a href="https://github.com/magikh0e/PrintVault/releases" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>',
+        '<a href="https://github.com/magikh0e/Printery/releases" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>',
       '<div class="sp"></div><button class="b p" onclick="PV.Modal.back()">Close</button>');
   },
 

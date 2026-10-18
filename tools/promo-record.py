@@ -1,4 +1,4 @@
-"""Drive PrintVault and Headfit through a click path and record it.
+"""Drive Printery and Headfit through a click path and record it.
 
 Two webm clips into promo/, which tools/promo-build.sh then cuts into the reel.
 Recording and composing are separate on purpose: the capture is the slow,
@@ -27,7 +27,7 @@ APP = "http://localhost:9123/index.html?demo"
 HEADFIT = "http://localhost:9124/headfit.html"
 # Portrait, because the reel is portrait. Filming at 1280x800 and scaling it
 # into a 1080x1920 canvas left the clip filling barely a third of the height
-# with dead space above and below. Both apps hold up at 1000x1400: PrintVault
+# with dead space above and below. Both apps hold up at 1000x1400: Printery
 # keeps its sidebar and a three wide grid, Headfit keeps a large viewport.
 SIZE = {"width": 1000, "height": 1400}
 

@@ -1,6 +1,6 @@
-# PrintVault
+# Printery
 
-![PrintVault](docs/banner.png)
+![Printery](docs/banner.png)
 
 I had about 460 files in a folder called "3d print files". Half a dozen
 subfolders named "files". No idea which settings I'd used on anything I'd
@@ -28,7 +28,7 @@ you close the tab.
 ### Thirty seconds of it working
 
 <a href="https://youtu.be/B8cpOXRhWRE"><img src="docs/reel-poster.webp" width="300"
- alt="PrintVault and Headfit, thirty seconds of it working"></a>
+ alt="Printery and Headfit, thirty seconds of it working"></a>
 
 The library, a model with its files and settings, the duplicates, the print log,
 then Headfit checking a helmet against a head built from tape measurements.
@@ -36,7 +36,7 @@ Filmed against the demo library, so every model in it is invented.
 
 It plays on [YouTube](https://youtu.be/B8cpOXRhWRE) or on [the site](https://printvault.magikh0e.pl/#reel),
 and the file itself is attached to
-[the latest release](https://github.com/magikh0e/PrintVault/releases/latest).
+[the latest release](https://github.com/magikh0e/Printery/releases/latest).
 GitHub will not play a video that lives in a repo, which is why this is a poster
 and not a player.
 
@@ -47,7 +47,7 @@ tags still work at four hundred models, and what to do about the duplicates.
 The desktop app is worth it if you have a lot of files, keep them on a network
 share, or are tired of re-granting folder access every session. Grab an
 installer from
-[Releases](https://github.com/magikh0e/PrintVault/releases):
+[Releases](https://github.com/magikh0e/Printery/releases):
 
 | Platform | File |
 | --- | --- |
@@ -211,7 +211,7 @@ days, of filament finding out. It's one HTML file like this one, it runs at
 and Settings in here has a button that opens it.
 
 It lives in its own repo. It's a separate tool on its own version number and
-nothing in it depends on PrintVault, but the site serves both, so
+nothing in it depends on Printery, but the site serves both, so
 `tools/headfit.sh` fetches the file when a deploy needs it.
 
 ## Support
@@ -224,10 +224,10 @@ helps keep it going.
 
 Bug reports and folder layouts that break the scanner are just as useful.
 
-Something broken goes in [Issues](https://github.com/magikh0e/PrintVault/issues).
+Something broken goes in [Issues](https://github.com/magikh0e/Printery/issues).
 Anything else, questions, a folder structure you can't get grouping sensibly,
 or a look at what your own library turned out to contain, goes in
-[Discussions](https://github.com/magikh0e/PrintVault/discussions).
+[Discussions](https://github.com/magikh0e/Printery/discussions).
 
 ## Licence
 

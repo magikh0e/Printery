@@ -10,7 +10,7 @@ script is the source and it renders them with headless Chrome, the same way
 tools/make-og.sh renders the social cards.
 
 The app clip sits in the middle of a tall dark frame rather than filling it.
-PrintVault is a desktop layout and cropping it to a phone shape would show a
+Printery is a desktop layout and cropping it to a phone shape would show a
 column of one thing, which is not what it is. The caption underneath changes
 with what is on screen.
 
@@ -98,7 +98,7 @@ SEGMENTS = [
     # Timed against a contact sheet of the clip, one frame per second, not
     # against the sleeps in the recorder: page loads and renders push them
     # around and a caption describing the previous screen is worse than none.
-    ("printvault", 0.4, 13.0, "PrintVault", [
+    ("printvault", 0.4, 13.0, "Printery", [
         (0.0, 4.4, "Point it at the folder you already have"),
         (4.4, 7.2, "Every model, its files and its settings"),
         (7.2, 10.6, "Duplicates, and what they are costing you"),
