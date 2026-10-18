@@ -101,4 +101,18 @@ Options -Indexes
   <FilesMatch "\.html$">
     Header set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
+
+  # Same trap as the reel, same fix. The social cards keep their filenames when
+  # they are redrawn, so a month at the edge means a scraper is handed the old
+  # one long after the origin has the new one. The rename to Printery is what
+  # proved it: og.png came back a HIT at the old size with the old wordmark and
+  # a hostname that no longer exists, pinned until mid November, and the API
+  # token in use cannot purge this zone. A day means the worst case is a day.
+  #
+  # Header set, not ExpiresByType, because mod_expires has already written a
+  # month into Cache-Control by this point and only a later set replaces it.
+  # The html rule above works the same way and for the same reason.
+  <FilesMatch "^og.*\.(png|svg)$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
 </IfModule>
