@@ -13,7 +13,7 @@
 # rejected, so it is deployed like any other page.
 
 KEY=20116a2b48a4e637b95b39fe685d433a
-SITE=https://printvault.magikh0e.pl
+SITE=https://printery.magikh0e.com
 PATH_=${1:-/}
 
 curl -s -o /dev/null -w "IndexNow: %{http_code}\n"   "https://api.indexnow.org/indexnow?url=$SITE$PATH_&key=$KEY&keyLocation=$SITE/$KEY.txt"

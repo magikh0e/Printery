@@ -1,0 +1,16 @@
+# Goes in the printvault.magikh0e.pl docroot, nothing else does.
+#
+# The site moved to printery.magikh0e.com when the app was renamed. This keeps
+# every old address working: the GitHub README links, the YouTube description,
+# the reel, anything anyone bookmarked, and the inbound links from magikh0e.pl
+# that took weeks to get crawled in the first place.
+#
+# Permanent, and path preserving, so /guide.html lands on /guide.html rather
+# than dumping everyone on the home page, which is what tells a search engine
+# the pages moved rather than vanished.
+#
+# Leave this in place indefinitely. It costs nothing and the day it is removed
+# is the day those links start 404ing.
+
+RewriteEngine On
+RewriteRule ^(.*)$ https://printery.magikh0e.com/$1 [R=301,L,QSA]

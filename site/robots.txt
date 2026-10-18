@@ -3,4 +3,4 @@ Allow: /
 Disallow: /app/
 Disallow: /probe/
 
-Sitemap: https://printvault.magikh0e.pl/sitemap.xml
+Sitemap: https://printery.magikh0e.com/sitemap.xml

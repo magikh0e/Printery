@@ -25,8 +25,8 @@ RAW=https://raw.githubusercontent.com/$SRC_REPO/main/headfit.html
 HOST=u959320219@217.196.54.195
 PORT=65002
 KEY=~/.ssh/id_ed25519
-ROOT=/home/u959320219/domains/printvault.magikh0e.pl/public_html
-SITE=https://printvault.magikh0e.pl
+ROOT=/home/u959320219/domains/printery.magikh0e.com/public_html
+SITE=https://printery.magikh0e.com
 
 cd "$(dirname "$0")/.."
 DEST=site/headfit.html
