@@ -69,7 +69,10 @@ fi
 # a truncated download or an error page wearing a 200.
 BYTES=$(wc -c < "$TMP")
 [ "$BYTES" -gt 300000 ] || die "$FROM came back as $BYTES bytes, which is too small to be Headfit"
-grep -q '<title>Headfit' "$TMP" || die "$FROM does not look like Headfit: no title"
+# Headfit anywhere in the title rather than at the front of it. This is a
+# "did I really download the page" check, and pinning it to the first word
+# meant the title could not be rewritten without the deploy refusing it.
+grep -qE '<title>[^<]*Headfit' "$TMP" || die "$FROM does not look like Headfit: no title"
 HF=$(grep -oE "APP_VERSION = '[0-9.]+'" "$TMP" | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)
 [ -n "$HF" ] || die "could not read an APP_VERSION out of $FROM"
 
