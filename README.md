@@ -2,6 +2,14 @@
 
 ![Printery](docs/banner.png)
 
+> [!NOTE]
+> **This was called PrintVault until 18 October 2026.** Same project, same app,
+> nothing to re-import. I renamed it because five other things were already using
+> that name, including a paid Windows app doing nearly the same job. Your library,
+> tags, notes and print history are untouched, it updates in place, backups
+> exported under the old name still restore, and every old link redirects.
+> The installer files are still named `PrintVault_*`, which is [deliberate](#get-it).
+
 I had about 460 files in a folder called "3d print files". Half a dozen
 subfolders named "files". No idea which settings I'd used on anything I'd
 already printed. When I finally got a proper index of it there were 78 zips
@@ -54,6 +62,19 @@ installer from
 | Windows | `.msi` or `.exe` |
 | macOS | `.dmg` (universal, Intel and Apple Silicon) |
 | Linux | `.AppImage`, `.deb` or `.rpm` |
+
+The files are still named `PrintVault_*`, and on Windows so is the entry in Add
+and Remove Programs. That is deliberate rather than something I forgot. The
+`.exe` installer finds your existing copy through a registry entry named after
+the product, and the deb and rpm packages key on it too, so renaming it would
+install a second copy beside the first and leave the old one behind with a dead
+shortcut. If you go looking for Printery in your installed programs, look for
+PrintVault.
+
+On Windows the `.msi` and the `.exe` are alternatives rather than options. They
+install to the same folder and neither knows the other is there, so running one
+over the top of the other leaves two uninstall entries sharing one copy. Pick
+either and stay with it.
 
 The builds aren't code signed, because certificates cost more than this
 project does. Windows SmartScreen will want "More info" then "Run anyway", and
