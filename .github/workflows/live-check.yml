@@ -160,8 +160,15 @@ jobs:
           # The Change of Address filed on 2026-10-18 rests on these. They have
           # to keep answering for at least 180 days, and losing them silently
           # throws away the ranking history the move was meant to carry over.
+          # A plain HEAD with curl's own user agent gets a 403 from here. The
+          # magikh0e.pl zone sits behind stricter Cloudflare settings than
+          # magikh0e.com and refuses datacenter traffic that looks automated,
+          # which a GitHub runner is. So this is a GET with a browser user
+          # agent and redirects left unfollowed, which is what a person's
+          # browser does on the first hop anyway.
+          UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
           for p in "" "guide.html" "headfit.html"; do
-            got=$(curl -sS -o /dev/null -w '%{http_code} %{redirect_url}' -I "$OLD/$p") || got="000 -"
+            got=$(curl -sS -o /dev/null -A "$UA" --max-redirs 0 -w '%{http_code} %{redirect_url}' "$OLD/$p") || got="000 -"
             code=${got%% *}; dest=${got#* }
             if [ "$code" = "301" ] && [ "$dest" = "$SITE/$p" ]; then
               ok "old /$p redirects to the matching page"
