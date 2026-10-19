@@ -1,0 +1,178 @@
+# Checks that the live site is actually serving what it should, once a day.
+#
+# This exists because of 2026-10-18. 0.2.34 was published, the site deploy did
+# not follow it, and the home page spent a day offering six downloads that all
+# returned 404, with nothing anywhere saying so. tools/site-version.sh proves
+# every link resolves at deploy time, but nothing watched the site afterwards,
+# and the things that break it happen afterwards: a release published without a
+# redeploy, an asset renamed, a .htaccess edit that drops a header, a redirect
+# that stops redirecting.
+#
+# Deliberately no browser and no dependencies. Everything here is curl and the
+# GitHub API, so it is fast, it does not rot, and a failure means the site is
+# wrong rather than the tooling being wrong.
+#
+# It collects failures rather than stopping at the first, so one red run tells
+# you everything that is broken instead of the first thing.
+
+name: Live check
+
+on:
+  schedule:
+    # 07:00 in Hawaii, which is where this is maintained from.
+    - cron: "0 17 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SITE: https://printery.magikh0e.com
+  OLD: https://printvault.magikh0e.pl
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the live site
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          fails=0
+          bad(){ printf '\033[1;31mFAIL\033[0m  %s\n' "$*"; fails=$((fails+1)); }
+          ok(){  printf '\033[1;32mok\033[0m    %s\n' "$*"; }
+
+          page=$(mktemp); app=$(mktemp)
+
+          # ---------------------------------------------------------------
+          # 1. The site answers, and with the version that is actually out.
+          # ---------------------------------------------------------------
+          code=$(curl -sS -o "$page" -w '%{http_code}' "$SITE/") || code=000
+          if [ "$code" != "200" ]; then
+            bad "$SITE/ returned $code"
+          else
+            ok "home page returns 200, $(wc -c < "$page") bytes"
+          fi
+
+          tag=$(gh api repos/${{ github.repository }}/releases/latest --jq .tag_name)
+          ver=${tag#desktop-v}
+          [ -n "$ver" ] || bad "could not read the latest release tag from the API"
+
+          # Asset names come from the API rather than by fetching the files.
+          # Fetching them would increment GitHub's download counter, and a daily
+          # job doing that would add roughly 240 fake downloads a month and
+          # destroy the only usage signal this project has. That has already
+          # happened once through tools/site-version.sh's link checking, which
+          # is why the historical .exe to .msi split cannot be trusted.
+          assets=$(gh api "repos/${{ github.repository }}/releases/tags/$tag" --jq '.assets[].name')
+
+          # Every release asset the page links to must exist on that release.
+          # The count guard matters: with no links at all the loop below simply
+          # does not run and reports nothing, so a page replaced by something
+          # else entirely would pass this silently. site-version.sh refuses for
+          # the same reason.
+          linked=$(grep -oE 'releases/latest/download/[^"]+' "$page" | sed 's|.*/||' | sort -u)
+          n=$(echo "$linked" | grep -c . || true)
+          if [ "$n" -lt 8 ]; then
+            bad "found $n download links on the page, which cannot be right"
+          else
+            ok "page offers $n downloads"
+          fi
+
+          missing=0
+          for name in $linked; do
+            if printf '%s\n' "$assets" | grep -qxF "$name"; then
+              ok "linked asset exists: $name"
+            else
+              bad "the page links $name but it is not on $tag"
+              missing=$((missing+1))
+            fi
+          done
+          [ "$missing" -eq 0 ] || bad "$missing linked download(s) would 404"
+
+          # And the filenames must carry the current version, which is the
+          # specific way it broke: well formed links, every one of them wrong.
+          if grep -q "PrintVault_${ver}_" "$page"; then
+            ok "page advertises $ver, matching $tag"
+          else
+            onpage=$(grep -oE 'PrintVault_[0-9.]+_x64' "$page" | head -1)
+            bad "page advertises ${onpage:-nothing} but the current release is $ver"
+          fi
+
+          # Source archive links point at a tag, so check that tag is this one.
+          for t in $(grep -oE 'archive/refs/tags/[^"]+' "$page" | sed 's|.*/||; s|\.(tar\.gz\|zip)$||' | sort -u); do
+            case "$t" in
+              "$tag".*|"$tag") ok "source archive points at $tag" ;;
+              *) bad "source archive points at $t, not $tag" ;;
+            esac
+          done
+
+          # ---------------------------------------------------------------
+          # 2. The security headers are present.
+          # ---------------------------------------------------------------
+          # These live in site/.htaccess, which is not part of a routine deploy
+          # and so can sit untouched for months. If one is ever dropped, nothing
+          # about the site looks wrong.
+          hdrs=$(curl -sSI "$SITE/" | tr -d '\r')
+          for h in content-security-policy x-content-type-options referrer-policy x-frame-options permissions-policy; do
+            if printf '%s\n' "$hdrs" | grep -qi "^$h:"; then
+              ok "header present: $h"
+            else
+              bad "missing header: $h"
+            fi
+          done
+          # The CSP is the one with teeth, so check it still denies by default
+          # rather than merely existing.
+          if printf '%s\n' "$hdrs" | grep -qi "^content-security-policy:.*default-src 'none'"; then
+            ok "CSP still defaults to none"
+          else
+            bad "CSP no longer has default-src 'none'"
+          fi
+
+          # ---------------------------------------------------------------
+          # 3. The demo serves, whole.
+          # ---------------------------------------------------------------
+          # The demo is entirely client side: it seeds an in-memory database and
+          # never touches the network, so there is nothing to connect to. What
+          # can actually break is the upload, since /app/index.html is a copy of
+          # index.html that moves with every release and is sent separately. A
+          # truncated or stale copy is the realistic failure, so check size,
+          # version and that the demo code is really in there.
+          code=$(curl -sS -o "$app" -w '%{http_code}' "$SITE/app/?demo") || code=000
+          bytes=$(wc -c < "$app")
+          if [ "$code" != "200" ]; then
+            bad "$SITE/app/?demo returned $code"
+          elif [ "$bytes" -lt 300000 ]; then
+            bad "/app/ came back as $bytes bytes, too small to be the whole app"
+          else
+            ok "/app/?demo returns 200, $bytes bytes"
+          fi
+          grep -q "APP_VERSION = '$ver'" "$app" \
+            && ok "/app/ is on $ver" \
+            || bad "/app/ is not on $ver: $(grep -oE "APP_VERSION = '[0-9.]+'" "$app" | head -1)"
+          grep -q 'pv-demo' "$app" \
+            && ok "demo mode is present in the served app" \
+            || bad "no demo markup in the served app"
+
+          # ---------------------------------------------------------------
+          # 4. The old address still forwards.
+          # ---------------------------------------------------------------
+          # The Change of Address filed on 2026-10-18 rests on these. They have
+          # to keep answering for at least 180 days, and losing them silently
+          # throws away the ranking history the move was meant to carry over.
+          for p in "" "guide.html" "headfit.html"; do
+            got=$(curl -sS -o /dev/null -w '%{http_code} %{redirect_url}' -I "$OLD/$p") || got="000 -"
+            code=${got%% *}; dest=${got#* }
+            if [ "$code" = "301" ] && [ "$dest" = "$SITE/$p" ]; then
+              ok "old /$p redirects to the matching page"
+            else
+              bad "old /$p gave $code to ${dest:--}, expected 301 to $SITE/$p"
+            fi
+          done
+
+          echo
+          if [ "$fails" -gt 0 ]; then
+            echo "$fails check(s) failed."
+            exit 1
+          fi
+          echo "All checks passed."
