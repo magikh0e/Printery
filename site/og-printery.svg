@@ -32,8 +32,8 @@
   <text x="140" y="126" font-size="34" font-weight="700" fill="#e9edf4" letter-spacing="-1">Print<tspan fill="#ff7a2f">ery</tspan></text>
 
   <!-- headline -->
-  <text x="72" y="266" font-size="82" font-weight="800" fill="#e9edf4" letter-spacing="-3.6">Your STL folder</text>
-  <text x="72" y="356" font-size="82" font-weight="800" fill="url(#hot)" letter-spacing="-3.6">is a landfill.</text>
+  <text x="72" y="266" font-size="82" font-weight="800" fill="#e9edf4" letter-spacing="-3.6">My STL folder</text>
+  <text x="72" y="356" font-size="82" font-weight="800" fill="url(#hot)" letter-spacing="-3.6">was a landfill.</text>
 
   <text x="72" y="424" font-size="27" fill="#8f9aac" letter-spacing="-.4">A local-first manager for your 3D print library.</text>
 
