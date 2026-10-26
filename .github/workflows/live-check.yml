@@ -129,6 +129,20 @@ jobs:
           else
             bad "CSP no longer has default-src 'none'"
           fi
+          # Since 2026-10-25 the site pages allow Cloudflare's analytics beacon,
+          # and site/app/.htaccess puts the app back on the original policy,
+          # where no other host is reachable. If that file stops applying the
+          # app silently inherits the looser one, so check it on the app's page.
+          apphdr=$(curl -sSI "$SITE/app/" | tr -d '\r' | grep -i '^content-security-policy:')
+          if [ -z "$apphdr" ]; then
+            bad "/app/ sends no content security policy"
+          elif printf '%s\n' "$apphdr" | grep -qi 'cloudflareinsights'; then
+            bad "/app/ is on the site policy, which allows an outside host"
+          elif printf '%s\n' "$apphdr" | grep -qi "default-src 'none'"; then
+            ok "/app/ keeps its own policy, no outside hosts"
+          else
+            bad "/app/ policy no longer defaults to none"
+          fi
 
           # ---------------------------------------------------------------
           # 3. The demo serves, whole.

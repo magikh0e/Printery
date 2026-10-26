@@ -28,7 +28,21 @@ Options -Indexes
   # The value here was never in blocking our own origin, it is that no other
   # host can be reached at all, which is what keeps a bad filename from phoning
   # anywhere.
-  Header always set Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-inline' blob:; style-src 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self'; font-src 'self'; connect-src 'self' blob:; worker-src 'self' blob:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+  #
+  # One exception since 2026-10-25, and only for the site pages: Cloudflare Web
+  # Analytics, which Cloudflare injects at the edge for real browsers. The
+  # beacon script comes from static.cloudflareinsights.com and reports to
+  # cloudflareinsights.com. It sets no cookies. Before this it was being
+  # injected and refused on every page load, which showed as an error in the
+  # console and counted nothing.
+  #
+  # The app is not covered by this line. app/.htaccess sets the original
+  # policy back for /app/, because that is the page with people's file names
+  # and folder paths on it, and "no other host can be reached" is the whole
+  # point there. If that file ever goes missing the app falls back to this
+  # looser policy without anything looking wrong, which is why
+  # .github/workflows/live-check.yml checks for it every day.
+  Header always set Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-inline' blob: https://static.cloudflareinsights.com; style-src 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self'; font-src 'self'; connect-src 'self' blob: https://cloudflareinsights.com; worker-src 'self' blob:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"

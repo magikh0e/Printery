@@ -42,6 +42,15 @@ site/*
 !site/robots.txt
 !site/sitemap.xml
 
+# The app's own .htaccess, and nothing else from that folder. The site pages
+# allow Cloudflare's analytics beacon since 2026-10-25, and this file is what
+# keeps /app/ locked to its own origin, where people's file names and folder
+# paths are on the page. Losing it would quietly put the app back under the
+# looser policy, so it is tracked. Same directory trick as site/* above.
+!site/app/
+site/app/*
+!site/app/.htaccess
+
 # Headfit was tracked here until 2026-09-25 and now lives in its own repo at
 # github.com/magikh0e/headfit. It is a separate tool on a separate version
 # number, and being a file inside this repo meant it had no page, no releases
@@ -58,7 +67,7 @@ site/*
 # missing once already: the server carried on serving it, nothing looked wrong,
 # and only the next deploy would have failed. The pngs stay out, since they are
 # rendered output, but losing a source means redrawing the card.
-!site/og.svg
+!site/og-printery.svg
 !site/og-headfit.svg
 !site/og-github.svg
 

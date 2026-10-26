@@ -1,0 +1,21 @@
+# The app's own security policy, overriding the one in the site root.
+#
+# Since 2026-10-25 the site pages allow Cloudflare Web Analytics, which means
+# one outside host is reachable from them. This page is different. It renders
+# file names and folder paths taken off people's disks, and the reason the
+# policy exists is so that if one of those ever slipped past the escaping, it
+# would have nowhere to send anything. So the app keeps the original rule: no
+# host but its own, no exceptions.
+#
+# Cloudflare still injects its beacon here and this refuses it, so the console
+# shows one blocked script on /app/. That is this file working, not a fault.
+# To stop the attempt altogether, exclude /app/ in the Web Analytics rules in
+# the Cloudflare dashboard.
+#
+# Keep it identical to the site root's policy apart from the two Cloudflare
+# hosts. .github/workflows/live-check.yml checks every day that this file is
+# still in effect.
+
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-inline' blob:; style-src 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self'; font-src 'self'; connect-src 'self' blob:; worker-src 'self' blob:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+</IfModule>
