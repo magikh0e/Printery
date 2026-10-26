@@ -112,6 +112,10 @@ code,kbd,.mono{font-family:var(--mono);font-size:.92em}
    is declared later, so a bare .hide-lg loses to it. */
 button.hide-lg{display:none}
 .pv-scrim{display:none}
+/* Hints that only make sense with a keyboard and mouse. A phone was being
+   told to Ctrl-click. Keyed on the primary pointer rather than width, so a
+   touchscreen laptop with a trackpad still gets them. */
+@media(pointer:coarse){ .kbd-only{display:none} }
 .pv-main{flex:1;overflow-y:auto;padding:16px 18px 60px;min-width:0}
 .pv-view{display:none}
 .pv-view.on{display:block}
@@ -259,6 +263,10 @@ table.t .num{font-family:var(--mono);text-align:right;font-size:12px}
 .pv-ovl{position:fixed;inset:0;background:rgba(6,8,11,.72);backdrop-filter:blur(3px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto}
 .pv-ovl.on{display:flex}
 .pv-modal{background:var(--bg2);border:1px solid var(--line);border-radius:16px;width:100%;max-width:560px;box-shadow:0 24px 70px rgba(0,0,0,.55);animation:pop .16s ease-out;margin:auto}
+/* The dialog takes focus itself when it has no field to start in, so a screen
+   reader announces it. That is a container, not a control, and should not grow
+   a ring around the whole thing. */
+.pv-modal:focus{outline:none}
 .pv-modal.wide{max-width:900px}
 .pv-modal.xl{max-width:1120px}
 @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}}
@@ -392,6 +400,10 @@ table.t .num{font-family:var(--mono);text-align:right;font-size:12px}
   /* The sidebar is an overlay at this width rather than a column, so it needs
      a way out. Both the button and the scrim only exist down here. */
   button.hide-lg{display:inline-flex}
+  /* And the library's own toggle goes, or a phone shows two identical buttons
+     a few rows apart. That one flips the saved desktop column setting rather
+     than opening the overlay, so at this width it was the wrong control too. */
+  button.side-col{display:none}
   .pv-scrim{position:fixed;inset:0;z-index:49;background:rgba(0,0,0,.5)}
   .fr,.fr3{grid-template-columns:1fr}
 }
@@ -445,7 +457,7 @@ table.t .num{font-family:var(--mono);text-align:right;font-size:12px}
   </div>
 </div>
 
-<div class="pv-ovl" id="ovl"><div class="pv-modal" id="modal"></div></div>
+<div class="pv-ovl" id="ovl"><div class="pv-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" tabindex="-1"></div></div>
 <div class="pv-toasts" id="toasts"></div>
 <div class="pv-prog" id="prog">
   <div class="spin"></div>
@@ -794,6 +806,16 @@ const Modal = {
   open(title, bodyHtml, footerHtml, size, opts){
     const m = document.getElementById('modal'), ovl = document.getElementById('ovl');
     const wasOpen = ovl.classList.contains('on');
+    /* Focus used to stay on whatever opened the dialog, so Tab walked the
+       library underneath the overlay and Enter could open a second model behind
+       the first. Remember where we came from, take the page behind out of the
+       tab order and the accessibility tree while the dialog is up, and hand
+       focus back on close. Only on a fresh open: a dialog stacked on another
+       should return to the original card, not to the dialog it replaced. */
+    if(!wasOpen){
+      Modal._ret = document.activeElement;
+      document.querySelector('.pv-app').inert = true;
+    }
     if(opts && opts.root) Modal._stack.length = 0;
     else if(wasOpen && m.innerHTML)
       Modal._stack.push({html:m.innerHTML, cls:m.className, scroll:ovl.scrollTop, title:Modal._title});
@@ -804,7 +826,7 @@ const Modal = {
       '<div class="pv-mh">'+
         (back ? '<button class="b g ico" onclick="PV.Modal.back()" title="Back to '+
                 U.attr(Modal._stack[Modal._stack.length-1].title || 'previous')+'">'+I.chevL+'</button>' : '')+
-        '<h3>'+U.esc(title)+'</h3>'+
+        '<h3 id="mTitle">'+U.esc(title)+'</h3>'+
         '<button class="b g ico" onclick="PV.Modal.close()" title="Close">'+I.x+'</button>'+
       '</div>'+
       '<div class="pv-mb">'+bodyHtml+'</div>'+
@@ -812,8 +834,19 @@ const Modal = {
     ovl.classList.add('on');
     if(!back) ovl.scrollTop = 0;
     TagBox.wire(m);
+    Modal._focusIn(m);
+  },
+  /* A form puts you straight in its first field, as it always has. Anything
+     else focuses the dialog itself, which is labelled by its title, so a
+     screen reader announces what just opened and the next Tab starts inside. */
+  _focusIn(m){
     const first = m.querySelector('input:not([type=hidden]),textarea,select');
-    if(first) setTimeout(()=>first.focus(),40);
+    setTimeout(()=>(first || m).focus({preventScroll:true}), 40);
+  },
+  _focusable(m){
+    return [...m.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),' +
+      'select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
+      .filter(e=>e.getClientRects().length);
   },
   back(){
     const prev = Modal._stack.pop();
@@ -831,11 +864,27 @@ const Modal = {
     if(document.getElementById('vwWrap') && Viewer.data) Viewer.mount();
     Modal._title = prev.title;
     ovl.scrollTop = prev.scroll || 0;
+    // The element that had focus was in the markup just replaced.
+    Modal._focusIn(m);
   },
   setBody(html){ const b=document.querySelector('#modal .pv-mb'); if(b) b.innerHTML=html; },
   setTitle(t){ const h=document.querySelector('#modal .pv-mh h3'); if(h){ h.textContent=t; Modal._title=t; } },
   close(){ Modal._stack.length = 0; document.getElementById('ovl').classList.remove('on');
-    document.getElementById('modal').innerHTML=''; },
+    document.getElementById('modal').innerHTML='';
+    document.querySelector('.pv-app').inert = false;
+    /* Back to whatever opened it. Closing often re-renders the library, which
+       replaces the card that had focus with an identical new one, so if the
+       remembered element has gone, find its replacement by model id. */
+    const ret = Modal._ret, id = ret && ret.dataset ? ret.dataset.id : null;
+    Modal._ret = null;
+    // Looked up on the next tick, after any re-render the caller does next.
+    setTimeout(()=>{
+      if(document.getElementById('ovl').classList.contains('on')) return;
+      const r = ret && ret.isConnected ? ret
+        : id ? document.querySelector('.pv-card[data-id="'+CSS.escape(id)+'"]') : null;
+      if(r && r.focus) r.focus({preventScroll:true});
+    }, 0);
+  },
   confirm(title, msg, onYes, yesLabel, danger){
     Modal.open(title, '<p style="margin:0 0 4px;line-height:1.65;color:var(--dim)">'+msg+'</p>',
       '<button class="b" onclick="PV.Modal.back()">Cancel</button>'+
@@ -873,6 +922,16 @@ const Modal = {
 };
 document.getElementById('ovl').addEventListener('mousedown', e=>{ if(e.target.id==='ovl') Modal.close(); });
 document.addEventListener('keydown', e=>{
+  /* With the page behind made inert, Tab off the end of the dialog would land
+     in the browser's own chrome. Wrap it round instead, both directions. */
+  if(e.key==='Tab' && document.getElementById('ovl').classList.contains('on')){
+    const m = document.getElementById('modal'), f = Modal._focusable(m);
+    if(!f.length){ e.preventDefault(); m.focus(); return; }
+    const a = document.activeElement, i = f.indexOf(a);
+    if(e.shiftKey && (i <= 0 || a === m)){ e.preventDefault(); f[f.length-1].focus(); }
+    else if(!e.shiftKey && (i === f.length-1 || !m.contains(a))){ e.preventDefault(); f[0].focus(); }
+    return;
+  }
   if(e.key==='Escape' && document.getElementById('ovl').classList.contains('on')) Modal.back();
   else if((e.key==='ArrowRight' || e.key==='ArrowLeft') && document.getElementById('vwWrap')
           && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
@@ -3086,7 +3145,7 @@ const Library = {
     if(f.q) crumbs.push(['Search', f.q, "PV.Library.clearSearch()"]);
 
     let h = '<div class="pv-bar'+(Library.sel.size?' stick':'')+'">'+
-      '<button class="b g ico" onclick="PV.Library.toggleSide()" title="Toggle sidebar">'+I.menu+'</button>'+
+      '<button class="b g ico side-col" onclick="PV.Library.toggleSide()" title="Toggle sidebar">'+I.menu+'</button>'+
       '<h2>'+(f.tag ? U.esc(f.tag) : f.coll ? U.esc(f.coll) : f.rootId ? U.esc((Store.root(f.rootId)||{}).name) : 'All Models')+'</h2>'+
       '<span class="cnt">'+all.length.toLocaleString()+(all.length===1?' model':' models')+'</span>'+
       '<div class="sp"></div>'+
@@ -3095,7 +3154,7 @@ const Library = {
          ever said so. Shown until the first time you do it, then gone for
          good, so it teaches without becoming furniture. */
       (!Library.sel.size && all.length > 1 && !s.learnedSelect
-        ? '<span class="z" style="color:var(--dim2)">'+
+        ? '<span class="z kbd-only" style="color:var(--dim2)">'+
           (U.isMac() ? '⌘' : 'Ctrl')+'-click to pick several</span>' : '')+
       (Library.sel.size ? '<button class="b sm p" onclick="PV.Library.bulk()">'+I.tag+' Edit '+Library.sel.size+' selected</button>' : '')+
       (Library.sel.size && FS.canShare
@@ -6469,7 +6528,7 @@ const Stats = {
       (tags.length ? '<div class="pv-tags">'+tags.map(([t,n])=>
         '<span class="tg a" style="cursor:pointer;padding:5px 9px" onclick="PV.UI.go(\'library\');PV.Library.filter(\'tag\','+JSON.stringify(t).replace(/"/g,'&quot;')+')">'+
         U.esc(t)+' <b>'+n+'</b></span>').join('')+'</div>'
-       : '<div style="color:var(--dim2);font-size:12.5px">Nothing tagged yet. Select models in the library with Ctrl+click to tag in bulk.</div>')+'</div>';
+       : '<div style="color:var(--dim2);font-size:12.5px">Nothing tagged yet. Select models in the library with '+(U.isMac() ? '⌘' : 'Ctrl')+'+click to tag in bulk.</div>')+'</div>';
 
     h += '<div class="panel"><h3>'+I.folder+' Storage by folder</h3><table class="t"><tbody>'+
       U.sortBy(Store.roots, r=>r.bytes||0, 'desc').map(r=>
