@@ -476,7 +476,7 @@ table.t .num{font-family:var(--mono);text-align:right;font-size:12px}
  * Copyright (C) 2026 magikh0e
  * License: GPL-3.0-or-later (https://www.gnu.org/licenses/gpl-3.0.html)
  */
-const APP_VERSION = '0.3.0';
+const APP_VERSION = '0.3.1';
 
 /* ============================================================
    U — utilities
@@ -7583,6 +7583,11 @@ const Keys = {
 
 const WhatsNew = {
   notes: [
+    ['0.3.1', [
+      'The model view now works properly from the keyboard. Focus moves into it when it opens, Tab stays inside it instead of wandering through the library behind, and closing it puts you back on the model you opened. Screen readers now announce it as a dialog.',
+      'On a phone or tablet the hint about Ctrl-clicking to pick several models is gone, since there is no Ctrl key to press, and the sidebar no longer shows two identical buttons.',
+      'Settings told Mac users to Ctrl+click. It now says ⌘.'
+    ]],
     ['0.3.0', [
       'PrintVault is now Printery. Five other products already used the old name, including a paid Windows app doing nearly the same job, which made it impossible to find this one. Same app, same library, nothing to re-import.',
       'The site moved to printery.magikh0e.com. Old links redirect, so bookmarks keep working.',
