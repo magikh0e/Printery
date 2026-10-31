@@ -33,6 +33,9 @@
     "windows": {
       "wix": {
         "upgradeCode": "c70f168c-c834-5496-9dbd-3a58ce97cd70"
+      },
+      "nsis": {
+        "installerHooks": "windows/hooks.nsh"
       }
     }
   },
