@@ -635,12 +635,26 @@ async fn pv_extract(root: String, archive_rel: String, dest_rel: String) -> Resu
         if entry.is_dir() {
             continue;
         }
-        // enclosed_name() rejects absolute paths and any .. traversal
+        // enclosed_name() refuses any name whose .. would climb above the
+        // destination. As of zip 9 a leading / or drive letter is stripped
+        // rather than refused, so "/a.txt" lands at "a.txt" inside the
+        // destination, never at the root of the disk. On Windows it also
+        // refuses names the system treats specially, such as "file:stream"
+        // (an alternate data stream) and device names like CON or NUL.
+        // extract_tests.rs pins all of this down.
         let rel = match entry.enclosed_name() {
             Some(p) => p,
             None => {
                 failed += 1;
-                problems.push(format!("{} (unsafe path, refused)", entry.name()));
+                // name() returns a Result in zip 9. In practice it does not
+                // fail, since bytes that are not UTF-8 are read as the old DOS
+                // code page, but if it ever does, report the raw bytes rather
+                // than dropping the name from the report.
+                let shown = entry
+                    .name()
+                    .map(|n| n.into_owned())
+                    .unwrap_or_else(|_| String::from_utf8_lossy(entry.name_raw()).into_owned());
+                problems.push(format!("{} (unsafe path, refused)", shown));
                 continue;
             }
         };
@@ -1058,3 +1072,6 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running the Printery desktop app");
 }
+
+#[cfg(test)]
+mod extract_tests;

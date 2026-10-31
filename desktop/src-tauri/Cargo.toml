@@ -37,7 +37,18 @@ tokio-util = { version = "0.7", features = ["io"] }
 walkdir = "2"
 # Archive extraction happens here rather than in JS, so entry bytes never cross
 # the IPC bridge. Also covers compression methods the browser cannot inflate.
-zip = { version = "2", default-features = false, features = ["deflate", "bzip2", "zstd"] }
+#
+# 9 rather than 2 since 0.3.3, for GHSA-m665-v7pm-7grj, GHSA-q7v9-x93c-xqv3 and
+# GHSA-8hxf-qr8p-62x4. None was reachable from pv_extract: it reads with
+# ZipArchive and picks each output path itself through enclosed_name() rather
+# than using the streaming reader the overwrite needs, never calls extract()
+# where the symlink abort lives, and aes-crypto is not compiled in. Fixed
+# anyway, so that stays true without anyone having to re-derive it.
+#
+# In zip 9 "deflate" also pulls in zopfli, which only writes archives. This
+# only reads them, so it takes the flate2 decoder on its own, on the pure Rust
+# zlib-rs backend so no build needs a C zlib.
+zip = { version = "9", default-features = false, features = ["deflate-flate2-zlib-rs", "bzip2", "zstd"] }
 # 7z, which the browser build cannot do: it is LZMA, and shipping a decoder for
 # it would mean adding a dependency to a single HTML file that has none. Pure
 # Rust, so it needs no C toolchain on any of the three CI runners.
