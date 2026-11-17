@@ -32,7 +32,11 @@ Options -Indexes
   # One exception since 2026-10-25, and only for the site pages: Cloudflare Web
   # Analytics, which Cloudflare injects at the edge for real browsers. The
   # beacon script comes from static.cloudflareinsights.com and reports to
-  # cloudflareinsights.com. It sets no cookies. Before this it was being
+  # cloudflareinsights.com. It sets no cookies. I want it for troubleshooting
+  # and for checking how the site actually gets used: which pages people read,
+  # how they arrive, how fast pages load for them, and whether a change made
+  # things better or worse. It counts visits to the site, never anything the
+  # app does with someone's files. Before this it was being
   # injected and refused on every page load, which showed as an error in the
   # console and counted nothing.
   #
