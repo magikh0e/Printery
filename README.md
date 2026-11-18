@@ -52,6 +52,10 @@ There's a guide to [organising a folder full of 3D print files](https://printery
 if you want the approach before the tool: what to index, how to tag it so the
 tags still work at four hundred models, and what to do about the duplicates.
 
+The [wiki](https://github.com/magikh0e/Printery/wiki) is the practical side:
+installing, backups, moving to another machine, and what to do when something
+doesn't behave.
+
 The desktop app is worth it if you have a lot of files, keep them on a network
 share, or are tired of re-granting folder access every session. Grab an
 installer from
